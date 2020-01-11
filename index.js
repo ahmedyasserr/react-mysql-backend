@@ -14,10 +14,10 @@ app.listen('4000', () => {
 });
 //Create connection
 const db = mysql.createConnection({
-    host: '',
-    user : '',
+    host: 'localhost',
+    user : 'root',
     password : '',
-    database: ''
+    database: 'tododb'
 });
 
 db.connect((err) => {
@@ -28,42 +28,64 @@ db.connect((err) => {
 });
 
 //Get ALL Data
-app.get('/', (req, res)=> {
-    let sql = 'SELECT * FROM studentdata';
+app.get('/list', (req, res)=> {
+    let sql = 'SELECT * FROM todos';
     let query = db.query(sql, (err, results) =>{
-        if(err){            
+        if(err){         
+            res.status(400).send("Error, could not retrieve data.");   
             throw err;
         } else {
             return res.json({
                 data : results
             })
         }
-        res.send('student data received');
     });
 });
 
 //add new student
-app.post('/addstudent', function (req, res) {
+app.post('/list/add', function (req,res) {
     console.log(req.body);
-    var Fname = req.body.Fname;
-    var Mname = req.body.Mname;
-    var Lname = req.body.Lname;
-    var Age = req.body.Age;
-    var Section = req.body.Section;
+    let description = req.body.description;
+    let responsible = req.body.responsible;
+    let priority = req.body.priority;
+    let isComplete = req.body.isComplete;
 
-        let sql = "INSERT INTO studentdata (Fname, Mname, Lname, Age, Section) VALUES ('" + Fname + "','" + Mname + "','" + Lname + "','" + Age + "','" + Section + "')";
-        db.query(sql, function (err, result) {
-            if (err) throw err;
+        let sql = "INSERT INTO todos (description, responsible, priority, isComplete) VALUES ('" + description + "','" + responsible + "','" + priority + "','" + isComplete + "')";
+        db.query(sql, function (err) {
+            if (err){
+                res.status(400).send("Error, insertion failed.");
+                throw err;
+            } 
             console.log("1 record inserted");
 });
 });
 //delete student by id
-app.post('/delete', function (req, res) {
+app.post('list/delete/:id', function (req,res) {
     console.log(req.body);
-    var id = req.body.id;
-        let sql = `DELETE FROM studentdata WHERE id = ${id}` ;
-        db.query(sql, function (err, result) {
-            if (err) throw err;
+    let id = req.params.id;
+        let sql = `DELETE FROM todos WHERE id = ${id}` ;
+        db.query(sql, function (err) {
+            if (err){
+                res.status(400).send("Error, delete failed.");
+                throw err;
+            } 
             console.log("1 record deleted");
 });
+});
+
+ app.post(`list/update/:id`,function(req,res){
+    console.log(req.body);
+    let id = req.params.id;
+    let description = req.body.description;
+    let responsible = req.body.responsible;
+    let priority = req.body.priority;
+    let isComplete = req.body.isComplete;
+        let sql = `UPDATE todos SET description = ${description}, responsible = ${responsible}, priority = ${priority}, isComplete = ${isComplete} WHERE id = ${id}` ;
+        db.query(sql, function (err) {
+            if (err){
+                res.status(404).send("Error, Could not update data.");
+                throw err;
+            } 
+            console.log("1 record Updated!");
+ });
 });
