@@ -35,9 +35,7 @@ app.get("/list", (req, res) => {
       res.status(400).send("Error, could not retrieve data.");
       throw err;
     } else {
-      return res.json({
-        data: results
-      });
+      return res.json(results);
     }
   });
 });
@@ -82,7 +80,7 @@ app.post("list/delete/:id", function(req, res) {
   });
 });
 
-app.post(`list/update/:id`, function(req, res) {
+app.post(`list/edit/:id`, function(req, res) {
   console.log(req.body);
   let id = req.params.id;
   let description = req.body.description;
