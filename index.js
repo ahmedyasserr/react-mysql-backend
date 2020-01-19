@@ -39,9 +39,8 @@ app.get("/list", (req, res) => {
     }
   });
 });
-
 //add new student
-app.post("/list/add", function(req, res) {
+app.post("/add", function(req, res) {
   console.log(req.body);
   let description = req.body.description;
   let responsible = req.body.responsible;
@@ -67,7 +66,7 @@ app.post("/list/add", function(req, res) {
   });
 });
 //delete student by id
-app.post("list/delete/:id", function(req, res) {
+app.post("/delete/:id", function(req, res) {
   console.log(req.body);
   let id = req.params.id;
   let sql = `DELETE FROM todos WHERE id = ${id}`;
@@ -80,7 +79,7 @@ app.post("list/delete/:id", function(req, res) {
   });
 });
 
-app.post(`list/edit/:id`, function(req, res) {
+app.post(`/edit/:id`, function(req, res) {
   console.log(req.body);
   let id = req.params.id;
   let description = req.body.description;
